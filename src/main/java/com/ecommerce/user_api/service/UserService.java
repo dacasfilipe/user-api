@@ -1,5 +1,7 @@
 package com.ecommerce.user_api.service;
 
+import com.ecommerce.shopping_client.exception.UserNotFoundException;
+import com.ecommerce.user_api.converter.DTOConverter;
 import com.ecommerce.user_api.dto.UserDTO;
 import com.ecommerce.user_api.model.User;
 import com.ecommerce.user_api.repository.UserRepository;
@@ -46,12 +48,19 @@ public class UserService {
         return UserDTO.convert(user);
     }
 
+//    public UserDTO findByCpf(String cpf) {
+//        User user = userRepository.findByCpf(cpf);
+//        if (user != null) {
+//            return UserDTO.convert(user);
+//        }
+//        return null;
+//    }
     public UserDTO findByCpf(String cpf) {
         User user = userRepository.findByCpf(cpf);
-        if (user != null) {
-            return UserDTO.convert(user);
+        if (user == null) {
+            throw new UserNotFoundException();
         }
-        return null;
+        return DTOConverter.convert(user);
     }
 
     public List<UserDTO> queryByName(String name) {
