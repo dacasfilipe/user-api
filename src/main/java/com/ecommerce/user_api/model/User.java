@@ -26,6 +26,8 @@ public class User {
     private String email;
     private String telefone;
     private LocalDateTime dataCadastro;
+    @Column(name = "key", length = 36)
+    private String key;
 
     public static User convert(UserDTO userDTO){
         User user = new User();

@@ -1,5 +1,6 @@
 package com.ecommerce.user_api.controller;
 
+import com.ecommerce.user_api.dto.UserCreatedDTO;
 import com.ecommerce.user_api.dto.UserDTO;
 import com.ecommerce.user_api.service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.LocalDateTime;
@@ -32,13 +34,15 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO newUser(@RequestBody @Valid UserDTO userDTO) {
-       return userService.save(userDTO);
+    public UserCreatedDTO newUser(@Valid @RequestBody UserDTO userDTO) {
+
+        return userService.save(userDTO);
     }
 
     @GetMapping("/{cpf}/cpf")
-    public UserDTO findByCpf(@PathVariable String cpf) {
-        return userService.findByCpf(cpf);
+    public UserDTO findByCpf(@PathVariable String cpf,
+                            @RequestHeader(name = "key", required = true) String key) {
+        return userService.findByCpf(cpf, key);
     }
 
     @DeleteMapping("/{id}")

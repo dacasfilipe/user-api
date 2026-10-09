@@ -1,6 +1,7 @@
 package com.ecommerce.user_api.exception;
 
 import com.ecommerce.shopping_client.dto.ErrorDTO;
+import com.ecommerce.shopping_client.exception.InvalidAccessKeyException;
 import com.ecommerce.shopping_client.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,5 +17,11 @@ public class UserControllerAdvice {
     public ErrorDTO handleUserNotFound(UserNotFoundException ex) {
         return new ErrorDTO(HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(InvalidAccessKeyException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDTO handleInvalidAccessKey(InvalidAccessKeyException ex) {
+        return new ErrorDTO(401, ex.getMessage(), LocalDateTime.now());
     }
 }

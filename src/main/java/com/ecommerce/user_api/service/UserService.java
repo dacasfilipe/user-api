@@ -1,7 +1,9 @@
 package com.ecommerce.user_api.service;
 
+import com.ecommerce.shopping_client.exception.InvalidAccessKeyException;
 import com.ecommerce.shopping_client.exception.UserNotFoundException;
 import com.ecommerce.user_api.converter.DTOConverter;
+import com.ecommerce.user_api.dto.UserCreatedDTO;
 import com.ecommerce.user_api.dto.UserDTO;
 import com.ecommerce.user_api.model.User;
 import com.ecommerce.user_api.repository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,11 +38,11 @@ public class UserService {
         return UserDTO.convert(usuario);
     }
 
-    public UserDTO save(UserDTO userDTO) {
-        userDTO.setDataCadastro(LocalDateTime.now());
-        User user = userRepository.save(User.convert(userDTO));
-        return UserDTO.convert(user);
-    }
+//    public UserDTO save(UserDTO userDTO) {
+//        userDTO.setDataCadastro(LocalDateTime.now());
+//        User user = userRepository.save(User.convert(userDTO));
+//        return UserDTO.convert(user);
+//    }
 
     public UserDTO delete(long userId) {
         User user = userRepository
@@ -55,13 +58,21 @@ public class UserService {
 //        }
 //        return null;
 //    }
-    public UserDTO findByCpf(String cpf) {
-        User user = userRepository.findByCpf(cpf);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return DTOConverter.convert(user);
+//    public UserDTO findByCpf(String cpf) {
+//        User user = userRepository.findByCpf(cpf);
+//        if (user == null) {
+//            throw new UserNotFoundException();
+//        }
+//        return DTOConverter.convert(user);
+//    }
+// Importe InvalidAccessKeyException.
+public UserDTO findByCpf(String cpf, String key) {
+    User user = userRepository.findByCpfAndKey(cpf, key);
+    if (user == null) {
+        throw new InvalidAccessKeyException();
     }
+    return DTOConverter.convert(user);
+}
 
     public List<UserDTO> queryByName(String name) {
         List<User> usuarios = userRepository.queryByNomeLike(name);
@@ -94,5 +105,14 @@ public class UserService {
         Page<User> users = userRepository.findAll(page);
         return users
                 .map(UserDTO::convert);
+    }
+
+    public UserCreatedDTO save(UserDTO userDTO) {
+        User user = User.convert(userDTO);
+        user.setKey(UUID.randomUUID().toString());
+        user.setDataCadastro(LocalDateTime.now());
+
+        User saved = userRepository.save(user);
+        return new UserCreatedDTO(DTOConverter.convert(saved), saved.getKey());
     }
 }
