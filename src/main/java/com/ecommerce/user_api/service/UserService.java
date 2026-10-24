@@ -1,6 +1,6 @@
 package com.ecommerce.user_api.service;
 
-import com.ecommerce.shopping_client.exception.InvalidAccessKeyException;
+import com.ecommerce.shopping_client.exception.InvalidAcessKeyException;
 import com.ecommerce.shopping_client.exception.UserNotFoundException;
 import com.ecommerce.user_api.converter.DTOConverter;
 import com.ecommerce.user_api.dto.UserCreatedDTO;
@@ -69,7 +69,7 @@ public class UserService {
 public UserDTO findByCpf(String cpf, String key) {
     User user = userRepository.findByCpfAndKey(cpf, key);
     if (user == null) {
-        throw new InvalidAccessKeyException();
+        throw new InvalidAcessKeyException();
     }
     return DTOConverter.convert(user);
 }
